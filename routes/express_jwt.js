@@ -2,6 +2,7 @@
 
 // Refer: https://qiita.com/AkihiroTakamura/items/ac4f1d3ec32effdd63d2
 
+var debug = require('debug')('auth-sandbox:routes:express_jwt');
 var express = require('express');
 var router = express.Router();
 var jwt = require('jsonwebtoken');
@@ -99,10 +100,10 @@ router.get('/', function(req, res) {
 });
 
 router.get('/users', function(req, res) {
-  //User.find({}, function(err, users) {
-  User.count({}, function(err, users) {
+  User.find({}, function(err, users) {
+    debug('users', users);
     if (err) throw err;
-    res.json(users);
+    res.json(users.length);
   });
 });
 
