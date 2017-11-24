@@ -30,7 +30,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
-app.use('/api-users', apiAuth);
+app.use('/api-auth', apiAuth);
 app.use('/express-jwt', expressJwt);
 
 // catch 404 and forward to error handler
