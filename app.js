@@ -1,6 +1,7 @@
 'use strict';
 
 var express = require('express');
+var engine = require('ejs-mate');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
@@ -14,10 +15,12 @@ mongoose.connect(process.env.MONGODB || 'mongodb://localhost:27017/api-auth');
 var index = require('./routes/index');
 var apiAuth = require('./routes/api_auth');
 var expressJwt = require('./routes/express_jwt');
+var googleAuthenticator = require('./routes/google_authenticator');
 
 var app = express();
 
 // view engine setup
+app.engine('ejs', engine);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
@@ -32,6 +35,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/api-auth', apiAuth);
 app.use('/express-jwt', expressJwt);
+app.use('/google-authenticator', googleAuthenticator);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
