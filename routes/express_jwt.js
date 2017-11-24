@@ -2,7 +2,7 @@
 
 // Refer: https://qiita.com/AkihiroTakamura/items/ac4f1d3ec32effdd63d2
 
-var debug = require('debug')('auth-sandbox:routes:express_jwt');
+var debug = require('debug')('node-js-auth-sandbox:routes:express_jwt');
 var express = require('express');
 var router = express.Router();
 var jwt = require('jsonwebtoken');
