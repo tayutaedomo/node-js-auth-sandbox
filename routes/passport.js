@@ -1,5 +1,6 @@
 'use strict';
 
+const debug = require('debug')('node-js-auth-sandbox:routes:passport');
 const passport = require('passport');
 const JwtStrategy = require('passport-jwt').Strategy;
 const { ExtractJwt } = require('passport-jwt');
@@ -8,10 +9,13 @@ const { JWT_SECRET } = require('../config/index');
 const User = require('../models/user');
 
 passport.use(new JwtStrategy({
-  jwtFromRequest: ExtractJwt.fromHeader('authorization'),
+  jwtFromRequest: ExtractJwt.fromHeader('authorization') ||
+                  ExtractJwt.fromBodyField('token') ||
+                  ExtractJwt.fromUrlQueryParameter('token'),
   secretOrKey: JWT_SECRET
 }, async (payload, done) => {
   try {
+    debug('JwtStrategy', payload);
     const user = User.findById(payload.sub);
 
     if (!user) {
@@ -35,6 +39,7 @@ passport.use(new LocalStrategy({
     if (!user) {
       return done(null, false);
     }
+    debug('LocalStrategy', user);
 
     const isMatch = await user.isValidPassword(password);
 
@@ -47,6 +52,5 @@ passport.use(new LocalStrategy({
   } catch (error) {
     done(error, false);
   }
-
 }));
 
