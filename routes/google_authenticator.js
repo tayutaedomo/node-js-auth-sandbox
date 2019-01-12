@@ -38,7 +38,11 @@ router.post('/login', passport.authenticate('local', { session: false }), functi
         return;
       }
 
-      payload.secret = speakeasy.generateSecret({ length: 20 });
+      payload.secret = speakeasy.generateSecret({
+        length: 20,
+        name: req.user.email,
+        issuer: 'TestTest'
+      });
       debug('secret.base32', payload.secret.base32); // Save this value to your DB for the user
 
       req.user.gaTempSecret = payload.secret.base32;
