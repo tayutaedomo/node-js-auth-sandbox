@@ -19,6 +19,7 @@
     "express": "~4.15.2",
     "express-promise-router": "^2.0.0",
     "joi": "^10.6.0",
+    "js-beautify": "^1.8.9",
     "jsonwebtoken": "^8.1.0",
     "mongoose": "^4.12.1",
     "morgan": "~1.8.1",

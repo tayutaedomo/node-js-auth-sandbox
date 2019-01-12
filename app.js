@@ -7,6 +7,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+const beautify = require('js-beautify').js_beautify;
 
 var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
@@ -16,6 +17,7 @@ var index = require('./routes/index');
 var apiAuth = require('./routes/api_auth');
 var expressJwt = require('./routes/express_jwt');
 var googleAuthenticator = require('./routes/google_authenticator');
+var form = require('./routes/form');
 
 var app = express();
 
@@ -32,10 +34,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// locals
+app.locals.beautify = beautify;
+
 app.use('/', index);
 app.use('/api-auth', apiAuth);
 app.use('/express-jwt', expressJwt);
 app.use('/google-authenticator', googleAuthenticator);
+app.use('/form', form);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
