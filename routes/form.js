@@ -4,6 +4,7 @@ const debug = require('debug')('node-js-auth-sandbox:routes:form');
 const express = require('express');
 const router = express.Router();
 const Joi = require('joi');
+const passport = require('passport');
 
 const { validateBody, schemas } = require('../helpers/route_helpers');
 const User = require('../models/user');
@@ -50,10 +51,57 @@ router.post('/signup', function(req, res) {
 
 
 router.get('/login', function(req, res) {
+  debug('login get', req.user);
+
   res.render('form/login', {
     title : 'Login Form',
-    data: { params: {} }
+    data: {
+      params: {},
+      user: req.user
+    }
   });
+});
+
+router.post('/login', function(req, res, next) {
+  const payload = {
+    title : 'Login Form',
+    data: { params: {} }
+  };
+
+  const result = Joi.validate(req.body, schemas.authSchema);
+
+  if (result.error) {
+    payload.data.result = result;
+    return res.render('form/login', payload);
+  }
+
+  passport.authenticate('local', function(err, user) {
+    if (err) {
+      console.error(err.stack || err);
+
+      payload.data.result = err;
+      return res.render('form/login', payload);
+
+    } else {
+      debug('login user', user);
+
+      req.user = user;
+
+      req.login(user, function(err) {
+        if (err) {
+          console.error(err.stack || err);
+
+          payload.data.result = err;
+          return res.render('form/login', payload);
+
+        } else {
+          payload.data.user = req.user;
+          return res.render('form/login', payload);
+        }
+      });
+    }
+
+  })(req, res, next);
 });
 
 

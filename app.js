@@ -1,25 +1,32 @@
 'use strict';
 
-var express = require('express');
-var engine = require('ejs-mate');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+const express = require('express');
+const engine = require('ejs-mate');
+const path = require('path');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 const beautify = require('js-beautify').js_beautify;
 
-var mongoose = require('mongoose');
+const passport = require('passport');
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
+
+const index = require('./routes/index');
+const apiAuth = require('./routes/api_auth');
+const expressJwt = require('./routes/express_jwt');
+const googleAuthenticator = require('./routes/google_authenticator');
+const form = require('./routes/form');
+
+const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 mongoose.connect(process.env.MONGODB || 'mongodb://localhost:27017/api-auth');
 
-var index = require('./routes/index');
-var apiAuth = require('./routes/api_auth');
-var expressJwt = require('./routes/express_jwt');
-var googleAuthenticator = require('./routes/google_authenticator');
-var form = require('./routes/form');
 
-var app = express();
+const app = express();
+
+app.use(logger('dev'));
 
 // view engine setup
 app.engine('ejs', engine);
@@ -28,20 +35,37 @@ app.set('view engine', 'ejs');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
+
+app.use(express.static(path.join(__dirname, 'public')));
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(session({
+  resave: true,
+  saveUninitialized: true,
+  secret: process.env.SESSION_SECRET || 'session_secret',
+  store: new MongoStore({
+    url: process.env.MONGODB || 'mongodb://localhost:27017/api-auth',
+    autoReconnect: true
+  })
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 
 // locals
 app.locals.beautify = beautify;
+
 
 app.use('/', index);
 app.use('/api-auth', apiAuth);
 app.use('/express-jwt', expressJwt);
 app.use('/google-authenticator', googleAuthenticator);
 app.use('/form', form);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
