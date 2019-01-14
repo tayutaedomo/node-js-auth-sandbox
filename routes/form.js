@@ -11,6 +11,12 @@ const User = require('../models/user');
 
 
 router.get('/signup', function(req, res) {
+  res.cookie('cookie_secure_try', 'Yes', {
+    expires: new Date(Date.now() + 900000),
+    //httpOnly: true,
+    secure: true
+  });
+
   res.render('form/signup', {
     title : 'Sign up Form',
     data: { params: {} }
