@@ -44,9 +44,9 @@ app.use(cookieParser());
 
 app.use(session({
   cookie: {
-    secure: process.env.COOKIE_SECURE == 1 ? 'auto' : false
+    //secure: process.env.COOKIE_SECURE == 1 ? 'auto' : false
     //secure: process.env.COOKIE_SECURE == 1
-    //secure: true
+    secure: true
   },
   resave: true,
   saveUninitialized: true,
