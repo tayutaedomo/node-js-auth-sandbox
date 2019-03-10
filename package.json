@@ -21,6 +21,7 @@
     "express": "~4.15.2",
     "express-promise-router": "^2.0.0",
     "express-session": "^1.15.6",
+    "hoek": "^4.2.1",
     "joi": "^10.6.0",
     "js-beautify": "^1.8.9",
     "jsonwebtoken": "^8.1.0",
